@@ -32,7 +32,7 @@ async function connect() {
 connect();
 
 pool.once("connect", () => {
-	if (process.env.CREATE_TABLE) {
+	if (process.env.CREATE_TABLE === "true") {
 		console.log("Conectado ao banco de dados, criando tabelas...");
 		pool.query(`
   
