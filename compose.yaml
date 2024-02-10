@@ -1,8 +1,8 @@
 version: '3.5'
 services:
   api01: &app
-    # image: 
-    build: .
+    image: hiroshimorowaka/rinha-backend-2024:latest
+    # build: .
     hostname: api01
     environment:
       - DATABASE_URL=postgres://docker:docker@postgres:5432/rinha
