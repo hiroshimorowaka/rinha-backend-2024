@@ -22,7 +22,7 @@ export async function extratoRoute(app) {
 		}
 
 		const databaseQuery = `
-    (select saldo as valor, 'gay' as tipo, 'gay' as descricao, now() as realizada_em from clientes where id = $1) 
+    (select saldo as valor, 'valor' as tipo, 'valor' as descricao, now() as realizada_em from clientes where id = $1) 
     union all 
     (select valor, tipo, descricao, realizada_em from transacoes
     where client_id = $1
