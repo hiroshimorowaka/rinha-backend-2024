@@ -23,6 +23,8 @@ services:
     hostname: api02
     environment:
       - CREATE_TABLE=false
+      - DATABASE_URL=postgres://docker:docker@postgres:5432/rinha
+      - DB_POOL=35
 
   postgres:
     image: postgres:16.1-alpine3.19
