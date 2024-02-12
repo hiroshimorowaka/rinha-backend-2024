@@ -45,7 +45,7 @@ export async function transferenciaRoute(app) {
 
 			if (clientObjResponse.rowCount === 0) {
 				await client.query("ROLLBACK");
-				return response.status(404).send("Cliente nao encontrado");
+				return response.status(404).send("Cliente não encontrado");
 			}
 
 			const clientObj = clientObjResponse.rows[0];
@@ -55,9 +55,7 @@ export async function transferenciaRoute(app) {
 				clientObj.saldo - bodyParams.valor < clientObj.limite * -1
 			) {
 				await client.query("ROLLBACK");
-				return response
-					.status(422)
-					.send("Eai irmao, ta achando q pode passar mais doq tem?");
+				return response.status(422).send("Saldo insuficiente");
 			}
 
 			const newClientInformations = await client.query(
@@ -80,7 +78,7 @@ export async function transferenciaRoute(app) {
 		} catch (e) {
 			await client.query("ROLLBACK");
 			console.error("Error on transaction Transaçoes ENDPOINT");
-			return response.status(500).send("fudeu");
+			return response.status(500).send("Erro cabuloso");
 		} finally {
 			client.release();
 		}
