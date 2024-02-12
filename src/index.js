@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import { deleteDatabase } from "./routes/deletedb";
 import { extratoRoute } from "./routes/extrato";
 import { transferenciaRoute } from "./routes/transferencia";
 
@@ -6,6 +7,7 @@ const app = Fastify();
 
 app.register(transferenciaRoute);
 app.register(extratoRoute);
+app.register(deleteDatabase);
 
 app.get("/", (_, response) => {
 	response.status(200).send({ hello: "World!" });

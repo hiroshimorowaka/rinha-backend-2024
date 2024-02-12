@@ -54,7 +54,15 @@ export async function transferenciaRoute(app) {
 		const client = await pool.connect();
 		try {
 			await client.query("BEGIN");
-			await client.query("SELECT pg_advisory_xact_lock($1)", [urlParams]);
+			await client.query(
+				"SELECT pg_advisory_xact_lock($1) FROM clientes WHERE id = $1",
+				[urlParams],
+			);
+
+			const saldoAtual = await client.query(
+				"SELECT saldo FROM clientes WHERE id = $1",
+				[urlParams],
+			);
 
 			const newClientInformations = await client.query(
 				"UPDATE clientes SET saldo = $1 WHERE id = $2 RETURNING saldo, limite",
