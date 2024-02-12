@@ -44,7 +44,7 @@ export async function transferenciaRoute(app) {
 			);
 
 			if (clientObjResponse.rowCount === 0) {
-				await client.query("COMMIT");
+				await client.query("ROLLBACK");
 				return response.status(404).send("Cliente nao encontrado");
 			}
 
@@ -54,7 +54,7 @@ export async function transferenciaRoute(app) {
 				bodyParams.tipo === "d" &&
 				clientObj.saldo - bodyParams.valor < clientObj.limite * -1
 			) {
-				await client.query("COMMIT");
+				await client.query("ROLLBACK");
 				return response
 					.status(422)
 					.send("Eai irmao, ta achando q pode passar mais doq tem?");
