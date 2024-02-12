@@ -45,10 +45,10 @@ export async function transferenciaRoute(app) {
 		}
 		let saldo;
 		if (bodyParams.tipo === "d") {
-			saldo = clientObj.saldo - bodyParams.valor;
+			saldo = -bodyParams.valor;
 		}
 		if (bodyParams.tipo === "c") {
-			saldo = clientObj.saldo + bodyParams.valor;
+			saldo = bodyParams.valor;
 		}
 
 		const client = await pool.connect();
@@ -59,13 +59,8 @@ export async function transferenciaRoute(app) {
 				[urlParams],
 			);
 
-			const saldoAtual = await client.query(
-				"SELECT saldo FROM clientes WHERE id = $1",
-				[urlParams],
-			);
-
 			const newClientInformations = await client.query(
-				"UPDATE clientes SET saldo = $1 WHERE id = $2 RETURNING saldo, limite",
+				"UPDATE clientes SET saldo = saldo + $1 WHERE id = $2 RETURNING saldo, limite",
 				[saldo, urlParams],
 			);
 
