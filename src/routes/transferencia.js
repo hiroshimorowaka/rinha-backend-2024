@@ -25,24 +25,7 @@ export async function transferenciaRoute(app) {
 		) {
 			return response.status(422).send("Body ta erradao");
 		}
-		const clientObjResponse = await pool.query(
-			"SELECT * FROM clientes WHERE id = $1",
-			[urlParams],
-		);
-		if (clientObjResponse.rowCount === 0) {
-			return response.status(404).send("Cliente nao encontrado");
-		}
 
-		const clientObj = clientObjResponse.rows[0];
-
-		if (
-			bodyParams.tipo === "d" &&
-			clientObj.saldo - bodyParams.valor < clientObj.limite * -1
-		) {
-			return response
-				.status(422)
-				.send("Eai irmao, ta achando q pode passar mais doq tem?");
-		}
 		let saldo;
 		if (bodyParams.tipo === "d") {
 			saldo = -bodyParams.valor;
@@ -54,10 +37,28 @@ export async function transferenciaRoute(app) {
 		const client = await pool.connect();
 		try {
 			await client.query("BEGIN");
-			await client.query(
-				"SELECT pg_advisory_xact_lock($1) FROM clientes WHERE id = $1",
+
+			const clientObjResponse = await pool.query(
+				"SELECT * FROM clientes WHERE id = $1 FOR UPDATE;",
 				[urlParams],
 			);
+
+			if (clientObjResponse.rowCount === 0) {
+				await client.query("COMMIT");
+				return response.status(404).send("Cliente nao encontrado");
+			}
+
+			const clientObj = clientObjResponse.rows[0];
+
+			if (
+				bodyParams.tipo === "d" &&
+				clientObj.saldo - bodyParams.valor < clientObj.limite * -1
+			) {
+				await client.query("COMMIT");
+				return response
+					.status(422)
+					.send("Eai irmao, ta achando q pode passar mais doq tem?");
+			}
 
 			const newClientInformations = await client.query(
 				"UPDATE clientes SET saldo = saldo + $1 WHERE id = $2 RETURNING saldo, limite",
