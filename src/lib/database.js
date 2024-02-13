@@ -3,7 +3,7 @@ import pg from "pg";
 
 const pgp = require("pg-promise");
 
-export const pool = pgp();
+export const pool = pgp(process.env.DATABASE_URL);
 
 if (process.env.CREATE_TABLE === "true") {
 	console.log("Conectado ao banco de dados, criando tabelas...");
