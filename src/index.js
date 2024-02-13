@@ -3,7 +3,9 @@ import { deleteDatabase } from "./routes/deletedb";
 import { extratoRoute } from "./routes/extrato";
 import { transferenciaRoute } from "./routes/transferencia";
 
-const app = Fastify();
+const app = Fastify({
+	logger: true,
+});
 
 app.register(transferenciaRoute);
 app.register(extratoRoute);
