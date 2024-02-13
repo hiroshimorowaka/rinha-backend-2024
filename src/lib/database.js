@@ -1,7 +1,7 @@
 import "dotenv/config";
 import pg from "pg";
 
-const pgp = require("pg-promise");
+const pgp = require("pg-promise")();
 
 export const pool = pgp(process.env.DATABASE_URL);
 
