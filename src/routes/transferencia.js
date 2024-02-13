@@ -35,8 +35,9 @@ export async function transferenciaRoute(app) {
 		try {
 			await client.query("BEGIN");
 			await client.query("SELECT pg_advisory_xact_lock($1)", [clientdId]);
+
 			const clientObjResponse = await pool.query(
-				"SELECT * FROM clientes WHERE id = $1 FOR UPDATE;",
+				"SELECT * FROM clientes WHERE id = $1;",
 				[clientdId],
 			);
 
