@@ -18,7 +18,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: '150MB'
+          memory: '100MB'
 
   api02:
     <<: *app
@@ -44,7 +44,7 @@ services:
       resources:
         limits:
           cpus: '1'
-          memory: '200MB'
+          memory: '300MB'
 
   nginx:
     
