@@ -12,12 +12,12 @@ export async function extratoRoute(app) {
 				.send("Nao tem parametro ou nao é um numero inteiro");
 		}
 
-		const clientLimit = await pool.query(
+		const clientLimit = await pool.oneOrNone(
 			"SELECT limite FROM clientes WHERE id = $1",
 			[urlParams],
 		);
 
-		if (clientLimit.rowCount === 0) {
+		if (!clientLimit) {
 			return response.status(404).send("cliente nao encontrado");
 		}
 
@@ -28,13 +28,13 @@ export async function extratoRoute(app) {
     where client_id = $1
     order by id desc limit 10)`;
 
-		const queryResult = await pool.query(databaseQuery, [urlParams]);
-		const [clientInformation, ...transactionInformations] = queryResult.rows;
+		const queryResult = await pool.manyOrNone(databaseQuery, [urlParams]);
+		const [clientInformation, ...transactionInformations] = queryResult;
 		const objToSend = {
 			saldo: {
 				total: clientInformation.valor,
 				data_extrato: new Date(),
-				limite: clientLimit.rows[0].limite,
+				limite: clientLimit.limite,
 			},
 			ultimas_transacoes: transactionInformations,
 		};
