@@ -2,12 +2,12 @@ import { pool } from "../lib/database";
 
 export async function transferenciaRoute(app) {
 	app.post("/clientes/:id/transacoes", async (request, response) => {
-		const urlParams = Number.isInteger(Number(request.params.id))
+		const clientdId = Number.isInteger(Number(request.params.id))
 			? Number(request.params.id)
 			: false;
 		const bodyParams = request.body;
 
-		if (!urlParams) {
+		if (!clientdId) {
 			return response
 				.status(422)
 				.send("Nao tem parametro ou nao é um numero inteiro");
@@ -34,10 +34,10 @@ export async function transferenciaRoute(app) {
 		const client = await pool.connect();
 		try {
 			await client.query("BEGIN");
-
+			await client.query("SELECT pg_advisory_xact_lock($1)", [clientdId]);
 			const clientObjResponse = await pool.query(
 				"SELECT * FROM clientes WHERE id = $1 FOR UPDATE;",
-				[urlParams],
+				[clientdId],
 			);
 
 			if (clientObjResponse.rowCount === 0) {
@@ -57,12 +57,12 @@ export async function transferenciaRoute(app) {
 
 			const newClientInformations = await client.query(
 				"UPDATE clientes SET saldo = saldo + $1 WHERE id = $2 RETURNING saldo, limite",
-				[saldo, urlParams],
+				[saldo, clientdId],
 			);
 
 			await client.query(
 				"INSERT INTO transacoes(valor, tipo,descricao, client_id) VALUES ($1, $2,$3, $4)",
-				[bodyParams.valor, bodyParams.tipo, bodyParams.descricao, urlParams],
+				[bodyParams.valor, bodyParams.tipo, bodyParams.descricao, clientdId],
 			);
 
 			await client.query("COMMIT");
@@ -74,7 +74,7 @@ export async function transferenciaRoute(app) {
 			return response.status(200).send(objToSend);
 		} catch (e) {
 			await client.query("ROLLBACK");
-			console.error("Error on transaction Transaçoes ENDPOINT");
+			console.error(`Error on transaction Transaçoes ENDPOINT: ${e}`);
 			return response.status(477).send("Erro cabuloso");
 		} finally {
 			client.release();
