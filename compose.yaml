@@ -43,7 +43,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '0.4'
           memory: '300MB'
 
   nginx:
