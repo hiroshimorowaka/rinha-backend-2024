@@ -26,12 +26,9 @@ export async function transferenciaRoute(app) {
 			return response.status(422).send("Body ta erradao");
 		}
 
-		let saldo;
+		let saldo = bodyParams.valor;
 		if (bodyParams.tipo === "d") {
 			saldo = -bodyParams.valor;
-		}
-		if (bodyParams.tipo === "c") {
-			saldo = bodyParams.valor;
 		}
 
 		const client = await pool.connect();
@@ -67,8 +64,8 @@ export async function transferenciaRoute(app) {
 				"INSERT INTO transacoes(valor, tipo,descricao, client_id) VALUES ($1, $2,$3, $4)",
 				[bodyParams.valor, bodyParams.tipo, bodyParams.descricao, urlParams],
 			);
-			await client.query("COMMIT");
 
+			await client.query("COMMIT");
 			const objToSend = {
 				saldo: newClientInformations.rows[0].saldo,
 				limite: newClientInformations.rows[0].limite,
@@ -78,7 +75,7 @@ export async function transferenciaRoute(app) {
 		} catch (e) {
 			await client.query("ROLLBACK");
 			console.error("Error on transaction Transaçoes ENDPOINT");
-			return response.status(500).send("Erro cabuloso");
+			return response.status(477).send("Erro cabuloso");
 		} finally {
 			client.release();
 		}
