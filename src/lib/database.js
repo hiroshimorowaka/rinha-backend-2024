@@ -5,8 +5,16 @@ const pgp = require("pg-promise")();
 export const pool = pgp(process.env.DATABASE_URL);
 
 if (process.env.CREATE_TABLE === "true") {
-	console.log("Conectado ao banco de dados, criando tabelas...");
-	pool.none(`
+	console.log("Conectando ao banco de dados e criando tabela...");
+
+	// Aqui tem um race condition entre o postgres subir e ele realmente executar a query,
+	//não sei se é só na hora de buildar a imagem,
+	// mas ele ta iniciando antes do banco começar a aceitar conexões,
+	// então ele falha e crasheia, não sei exatamente como tentar fazer a reconexão usando o pg-promise
+	// então essa foi a melhor maneira que encontrei atualmente.
+
+	setTimeout(async () => {
+		await pool.none(`
     
       DROP TABLE IF EXISTS "transacoes";
       DROP TABLE IF EXISTS "clientes";
@@ -49,6 +57,6 @@ if (process.env.CREATE_TABLE === "true") {
           ('kid mais', 5000 * 100);
       END; $$
       `);
-	console.log("tabelas criadas");
+		console.log("Tabelas Criadas");
+	}, 5000);
 }
-console.log("Conectado");
