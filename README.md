@@ -7,7 +7,7 @@ Aprendi mt coisa e fiquei horas quebrando a cabeça pra descobrir como usar o EC
   - Bun (Javascript Runtime)
   - Fastify (Server HTTP)
   - PostgreSQL (Banco de dados relacional)
-  - pg (Conexão com o Postgres)
+  - pg-promise (Conexão com o Postgres)
 
 ## Como rodar o projeto
 
@@ -19,6 +19,8 @@ Aprendi mt coisa e fiquei horas quebrando a cabeça pra descobrir como usar o EC
   docker compose up [-d]
   ```
   Depois disso, o projeto já vai estar rodando na porta 9999  
+
+  Se não rodar ou a API cair, só resetar o container SEM resetar o container de postgres, ai vai funcionar legal (se aparecer "tabelas criadas") ta funfando legal
 
   Você pode também só baixar o arquivo "compose.yaml" e "nginx.conf" e executar o mesmo comando que vai rodar do mesmo jeito, já que a imagem do docker já está upada no docker hub.
 
