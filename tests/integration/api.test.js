@@ -50,7 +50,7 @@ test("POST TO /clientes/1/transacoes: value: 200, type: C should return 0", asyn
 	expect(limite).toBe(100000);
 });
 
-test("GET TO /clientes/1/extrato should return total = 0 and 2 transactions", async () => {
+test("GET TO /clientes/1/extrato should return total = 0 and 10 transactions", async () => {
 	const response = await fetch("http://localhost:9999/clientes/1/extrato");
 	const { saldo, ultimas_transacoes } = await response.json();
 
