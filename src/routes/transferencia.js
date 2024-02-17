@@ -1,8 +1,4 @@
 import { pool } from "../lib/database";
-import {
-	ClienteNaoEncontradoError,
-	SaldoInsuficienteError,
-} from "../lib/errors";
 
 export async function transferenciaRoute(app) {
 	app.post("/clientes/:id/transacoes", async (request, response) => {
@@ -43,7 +39,7 @@ export async function transferenciaRoute(app) {
 				);
 
 				if (!clientObjResponse) {
-					throw new ClienteNaoEncontradoError("Cliente não encontrado");
+					return { status: 404 };
 				}
 
 				if (
@@ -51,7 +47,7 @@ export async function transferenciaRoute(app) {
 					clientObjResponse.saldo - bodyParams.valor <
 						clientObjResponse.limite * -1
 				) {
-					throw new SaldoInsuficienteError("Saldo insuficiente");
+					return { status: 422 };
 				}
 
 				const newClientInformations = await t.one(
@@ -68,10 +64,10 @@ export async function transferenciaRoute(app) {
 					limite: newClientInformations.limite,
 				};
 
-				return objToSend;
+				return { status: 200, message: objToSend };
 			});
 
-			return response.status(200).send(result);
+			return response.status(result.status || 522).send(result.message);
 		} catch (error) {
 			return response.status(Number(error.name) || 477).send(error.message);
 		}
