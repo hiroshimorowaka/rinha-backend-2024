@@ -4,7 +4,6 @@
   "dependencies": {
     "dotenv": "^16.4.1",
     "fastify": "^4.26.0",
-    "pg": "^8.11.3",
     "pg-promise": "^11.5.4"
   },
   "devDependencies": {
