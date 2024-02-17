@@ -23,7 +23,7 @@ export async function transferenciaRoute(app) {
 			bodyParams.descricao.length < 1 ||
 			bodyParams.descricao.length > 10
 		) {
-			return response.status(422).send("Body ta erradao");
+			return response.status(422).send();
 		}
 
 		let saldo = bodyParams.valor;
