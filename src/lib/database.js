@@ -41,6 +41,8 @@ if (process.env.CREATE_TABLE === "true") {
           CONSTRAINT "transacoes_pkey" PRIMARY KEY ("id")
       );
       
+      CREATE INDEX idx_extrato ON transacoes (id DESC);
+
       CREATE UNIQUE INDEX "clientes_id_key" ON "clientes"("id");
       
       CREATE UNIQUE INDEX "transacoes_id_key" ON "transacoes"("id");

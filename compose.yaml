@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   api01: &app
-    # image: hiroshimorowaka/rinha-backend-2024:latest
+    # image: hiroshimorowaka/rinha-backend-2024:nodejs
     build: .
     hostname: api01
     network_mode: host
