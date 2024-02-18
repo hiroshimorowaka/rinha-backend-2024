@@ -1,7 +1,7 @@
 import Fastify from "fastify";
-import { deleteDatabase } from "./routes/deletedb";
-import { extratoRoute } from "./routes/extrato";
-import { transferenciaRoute } from "./routes/transferencia";
+import { deleteDatabase } from "./routes/deletedb.js";
+import { extratoRoute } from "./routes/extrato.js";
+import { transferenciaRoute } from "./routes/transferencia.js";
 
 const app = Fastify();
 

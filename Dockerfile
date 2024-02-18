@@ -1,6 +1,7 @@
-FROM oven/bun:alpine
+FROM node:20.11.1-alpine3.18
 
 COPY . .
-RUN bun install
+RUN npm ci
+RUN npm install -g forever
 
-CMD ["bun", "run", "src/index.js"]
+CMD ["forever", "src/index.js"]

@@ -1,4 +1,4 @@
-import { pool } from "../lib/database";
+import { pool } from "../lib/database.js";
 
 export async function extratoRoute(app) {
 	app.get("/clientes/:id/extrato", async (request, response) => {

@@ -1,4 +1,4 @@
-import { pool } from "../lib/database";
+import { pool } from "../lib/database.js";
 
 export async function transferenciaRoute(app) {
 	app.post("/clientes/:id/transacoes", async (request, response) => {
