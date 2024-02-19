@@ -14,5 +14,3 @@ app.get("/", (_, response) => {
 });
 
 app.listen({ port: process.env.HTTP_PORT || 8080, host: "0.0.0.0" });
-
-console.log("Hello via Bun!");
