@@ -10,7 +10,7 @@ export async function transferenciaRoute(request, response) {
 	const clientdId = Number.isInteger(Number(request.params.id))
 		? Number(request.params.id)
 		: false;
-	const bodyParams = await request.json();
+	const bodyParams = request.body;
 
 	if (!clientdId) {
 		return response
