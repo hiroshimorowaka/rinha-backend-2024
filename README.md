@@ -3,8 +3,8 @@
 Eu sou um programador considerado iniciante, então foi um grande exercicio pra mim participar dessa rinha, além de muito divertido.   
 
 ## Stack
-  - Bun (Javascript Runtime)
-  - Fastify (Server HTTP)
+  - NodeJS (Javascript Runtime)
+  - Express (Server HTTP)
   - PostgreSQL (Banco de dados relacional)
   - pg-promise (Conexão com o Postgres)
 
