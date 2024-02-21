@@ -26,22 +26,30 @@ export async function extratoRoute(request, response) {
 		return response.status(404).send("cliente nao encontrado");
 	}
 
-	const databaseQuery = `
-    (select saldo as valor, 'valor' as tipo, 'valor' as descricao, now() as realizada_em from clientes where id = $1) 
-    union all 
-    (select valor, tipo, descricao, realizada_em from transacoes
-    where client_id = $1
-    order by id desc limit 10)`;
+	try {
+		await pool.tx(async (t) => {
+			await t.one("SELECT pg_advisory_xact_lock($1)", [urlParams]);
+			const databaseQuery = `
+      (select saldo as valor, 'valor' as tipo, 'valor' as descricao, now() as realizada_em from clientes where id = $1) 
+      union all 
+      (select valor, tipo, descricao, realizada_em from transacoes
+      where client_id = $1
+      order by id desc limit 10)`;
 
-	const queryResult = await pool.manyOrNone(databaseQuery, [urlParams]);
-	const [clientInformation, ...transactionInformations] = queryResult;
-	const objToSend = {
-		saldo: {
-			total: clientInformation.valor,
-			data_extrato: new Date(),
-			limite: clientLimit.limite,
-		},
-		ultimas_transacoes: transactionInformations,
-	};
-	return response.status(200).send(objToSend);
+			const queryResult = await t.manyOrNone(databaseQuery, [urlParams]);
+			const [clientInformation, ...transactionInformations] = queryResult;
+			const objToSend = {
+				saldo: {
+					total: clientInformation.valor,
+					data_extrato: new Date(),
+					limite: clientLimit.limite,
+				},
+				ultimas_transacoes: transactionInformations,
+			};
+			return response.status(200).send(objToSend);
+		});
+	} catch (error) {
+		console.error(error);
+		return response.status(500).send("Internal Error");
+	}
 }

@@ -33,7 +33,7 @@ pool.$pool.once("connect", () => {
               DROP TABLE IF EXISTS "clientes";
             
             
-              CREATE TABLE "clientes" (
+              CREATE UNLOGGED TABLE "clientes" (
                   id SERIAL NOT NULL,
                   nome TEXT NOT NULL,
                   limite INTEGER NOT NULL,
@@ -42,7 +42,7 @@ pool.$pool.once("connect", () => {
                   CONSTRAINT "clientes_pkey" PRIMARY KEY ("id")
               );
               
-              CREATE TABLE "transacoes" (
+              CREATE UNLOGGED TABLE "transacoes" (
                   id SERIAL NOT NULL,
                   valor INTEGER NOT NULL,
                   tipo CHAR(1) NOT NULL,

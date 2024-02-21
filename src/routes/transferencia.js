@@ -1,7 +1,10 @@
 import { request, response } from "express";
 import { pool } from "../lib/database.js";
+import {
+	ClienteNaoEncontradoError,
+	SaldoInsuficienteError,
+} from "../lib/errors.js";
 /**
- *
  * @param {request} request
  * @param {response} response
  * @returns
@@ -28,7 +31,11 @@ export async function transferenciaRoute(request, response) {
 		bodyParams.descricao.length < 1 ||
 		bodyParams.descricao.length > 10
 	) {
-		return response.status(422).send("Body ta errado");
+		return response
+			.status(422)
+			.send(
+				"O corpo da requisição precisa conter 'tipo', 'valor' e 'descricao' ",
+			);
 	}
 
 	let saldo = bodyParams.valor;
@@ -36,7 +43,7 @@ export async function transferenciaRoute(request, response) {
 		saldo = -bodyParams.valor;
 	}
 	try {
-		const result = await pool.tx(async (t) => {
+		await pool.tx(async (t) => {
 			await t.one("SELECT pg_advisory_xact_lock($1)", [clientdId]);
 			const clientObjResponse = await t.oneOrNone(
 				"SELECT * FROM clientes WHERE id = $1;",
@@ -44,7 +51,7 @@ export async function transferenciaRoute(request, response) {
 			);
 
 			if (!clientObjResponse) {
-				return { status: 404, message: "Cliente nao encontrado" };
+				throw new ClienteNaoEncontradoError("Cliente não encontrado!");
 			}
 
 			if (
@@ -52,7 +59,7 @@ export async function transferenciaRoute(request, response) {
 				clientObjResponse.saldo - bodyParams.valor <
 					clientObjResponse.limite * -1
 			) {
-				return { status: 422, message: "Limite insuficiente" };
+				throw new SaldoInsuficienteError("Saldo insuficiente!");
 			}
 
 			const newClientInformations = await t.one(
@@ -68,12 +75,9 @@ export async function transferenciaRoute(request, response) {
 				saldo: newClientInformations.saldo,
 				limite: newClientInformations.limite,
 			};
-
-			return { status: 200, message: objToSend };
+			return response.status(200).send(objToSend);
 		});
-
-		return response.status(result.status || 522).send(result.message);
 	} catch (error) {
-		return response.status(Number(error.name) || 477).send(error.message);
+		return response.status(Number(error.status) || 501).send(error.message);
 	}
 }
