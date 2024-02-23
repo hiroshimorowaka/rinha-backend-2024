@@ -28,7 +28,7 @@ export async function extratoRoute(request, response) {
 
 	try {
 		await pool.tx(async (t) => {
-			await t.one("SELECT pg_advisory_xact_lock($1)", [urlParams]);
+			// await t.one("SELECT pg_advisory_xact_lock($1)", [urlParams]);
 			const databaseQuery = `
       (select saldo as valor, 'valor' as tipo, 'valor' as descricao, now() as realizada_em from clientes where id = $1) 
       union all 
